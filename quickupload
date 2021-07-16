@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# s3buddy
+# https://github.com/harrego/s3buddy
+
+# quickupload
+# Upload a file to S3 and copy the destination URL to the clipboard.
+# Requires a file to be given, e.g. `quickupload image.png`.
+
+if [ ! -f "$1" ]; then
+	echo "error: \"$1\" does not exist"
+	exit 1
+fi
+
+S3BUCKET=
+S3PATH=
+S3ARGS=
+URL=
+
+PREFIXPATH="$S3PATH`tr -dc A-Za-z0-9 </dev/urandom | head -c 6 ; echo ''`/"
+aws s3 cp $1 s3://$S3BUCKET$PREFIXPATH --acl public-read $S3ARGS
+URL="$URL$PREFIXPATH`basename $1`"
+echo "$URL" | xclip -sel c
+echo "$URL"

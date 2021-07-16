@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# s3buddy
+# https://github.com/harrego/s3buddy
+
+# screenupload
+# Screenshot the whole screen, upload it to S3 and copy the destination URL
+# to the clipboard. Will wait 1 second before taking a screenshot.
+
+S3BUCKET=
+S3PATH=
+S3ARGS=
+URL=
+
+notify-send -t 750 "Waiting for 1 second"
+sleep 1s
+
+NAME=screenshot-`date +%s`-`tr -dc A-Za-z0-9 </dev/urandom | head -c 6 ; echo ''`.png && mate-screenshot -c && xclip -sel c -t image/png -o > /tmp/$NAME && aws s3 cp /tmp/$NAME s3://$S3BUCKET$S3PATH --acl public-read $S3ARGS && echo "$URL$S3PATH$NAME" | xclip -sel c
+
+notify-send -t 1000 "Uploaded, URL in clipboard"

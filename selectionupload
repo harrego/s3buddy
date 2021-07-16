@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# s3buddy
+# https://github.com/harrego/s3buddy
+
+# selectionupload
+# Screenshot a selection, upload it to S3 and copy the destination
+# URL to the clipboard.
+
+S3BUCKET=
+S3PATH=
+S3ARGS=
+URL=
+
+NAME=screenshot-`date +%s`-`tr -dc A-Za-z0-9 </dev/urandom | head -c 6 ; echo ''`.png && mate-screenshot -a -c && xclip -sel c -t image/png -o > /tmp/$NAME && aws s3 cp /tmp/$NAME s3://$S3BUCKET$S3PATH --acl public-read $S3ARGS && echo "$URL$S3PATH$NAME" | xclip -sel c
+
+notify-send -t 1000 "Uploaded, URL in clipboard"
